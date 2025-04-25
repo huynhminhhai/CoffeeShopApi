@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoffeeShopApi.Common;
 using CoffeeShopApi.Dto.Product;
+using CoffeeShopApi.Helper;
 using CoffeeShopApi.Interface;
 using CoffeeShopApi.Mapper;
 using Microsoft.AspNetCore.Mvc;
@@ -23,9 +24,9 @@ namespace CoffeeShopApi.Controller
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<IActionResult> GetProducts([FromQuery] ProductQueryObject queryObject)
         {
-            var products = await _productRepository.GetProductsAsync();
+            var products = await _productRepository.GetProductsAsync(queryObject);
 
             var productsDto = products.Select(p => p.ToProductDto()).ToList();
 

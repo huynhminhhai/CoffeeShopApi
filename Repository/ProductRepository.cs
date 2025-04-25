@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CoffeeShopApi.Data;
 using CoffeeShopApi.Dto.Product;
+using CoffeeShopApi.Helper;
 using CoffeeShopApi.Interface;
 using CoffeeShopApi.Model;
 using Microsoft.EntityFrameworkCore;
@@ -19,9 +20,34 @@ namespace CoffeeShopApi.Repository
             _context = context;
         }
 
-        public async Task<List<Product>> GetProductsAsync()
+        public async Task<List<Product>> GetProductsAsync(ProductQueryObject queryObject)
         {
-            return await _context.Products.ToListAsync();
+
+            var products = _context.Products.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(queryObject.Name))
+            {
+                products = products.Where(p => p.Name.ToLower().Contains(queryObject.Name.ToLower()));
+            }
+
+            if (queryObject.MinPrice.HasValue)
+            {
+                products = products.Where(p => p.Price >= queryObject.MinPrice.Value);
+            }
+
+            if (queryObject.MaxPrice.HasValue)
+            {
+                products = products.Where(p => p.Price <= queryObject.MaxPrice.Value);
+            }
+
+            if (queryObject.CategoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == queryObject.CategoryId.Value);
+            }
+
+            var skipNumber = (queryObject.PageIndex - 1) * queryObject.PageSize;
+
+            return await products.Skip(skipNumber).Take(queryObject.PageSize).ToListAsync();
         }
 
         public async Task<Product?> GetProductByIdAsync(int id)

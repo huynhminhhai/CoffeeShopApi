@@ -1,5 +1,6 @@
 using CoffeeShopApi.Common;
 using CoffeeShopApi.Dto.Category;
+using CoffeeShopApi.Helper;
 using CoffeeShopApi.Interface;
 using CoffeeShopApi.Mapper;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +19,9 @@ namespace CoffeeShopApi.Controller
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        public async Task<IActionResult> GetAllCategories([FromQuery] CategoryQueryObject query)
         {
-            var categories = await _categoryRepository.GetAllCategoriesAsync();
+            var categories = await _categoryRepository.GetAllCategoriesAsync(query);
 
             var categoriesDto = categories.Select(c => c.ToCategoryDto()).ToList();
 
