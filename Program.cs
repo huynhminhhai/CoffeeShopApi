@@ -1,6 +1,7 @@
 using CoffeeShopApi.Data;
 using CoffeeShopApi.Interface;
 using CoffeeShopApi.Repository;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
 );
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 builder.Services.AddScoped<ICaterogyRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();

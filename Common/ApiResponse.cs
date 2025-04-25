@@ -6,17 +6,15 @@ namespace CoffeeShopApi.Common
         public T? Data { get; set; }
         public string Message { get; set; } = string.Empty;
         public int StatusCode { get; set; }
-        public string ErrorCode { get; set; } = string.Empty;
 
         public ApiResponse() { }
 
-        public ApiResponse(bool success, T? data, string message = "", int statusCode = 200, string errorCode = "")
+        public ApiResponse(bool success, T? data, string message = "", int statusCode = 200)
         {
             Success = success;
             Data = data;
             Message = message;
             StatusCode = statusCode;
-            ErrorCode = errorCode;
         }
 
         public static ApiResponse<T> SuccessResponse(T data, string message = "", int statusCode = 200)
@@ -30,15 +28,14 @@ namespace CoffeeShopApi.Common
             };
         }
 
-        public static ApiResponse<T> ErrorResponse(string message, int statusCode = 500, string errorCode = "")
+        public static ApiResponse<T> ErrorResponse(string message, int statusCode = 500)
         {
             return new ApiResponse<T>
             {
                 Success = false,
                 Data = default,
                 Message = message,
-                StatusCode = statusCode,
-                ErrorCode = errorCode
+                StatusCode = statusCode
             };
         }
     }

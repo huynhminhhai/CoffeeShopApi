@@ -44,6 +44,16 @@ namespace CoffeeShopApi.Controller
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequestDto requestCategory)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .FirstOrDefault()?.ErrorMessage;
+
+                return BadRequest(ApiResponse<string>.ErrorResponse(firstError ?? "Validation failed", 400));
+            }
+
             var categoryModel = requestCategory.ToCategory();
 
             var category = await _categoryRepository.CreateCategoryAsync(categoryModel);
@@ -56,6 +66,16 @@ namespace CoffeeShopApi.Controller
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCategoryRequestDto updateCategory)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .FirstOrDefault()?.ErrorMessage;
+
+                return BadRequest(ApiResponse<string>.ErrorResponse(firstError ?? "Validation failed", 400));
+            }
+
             var category = await _categoryRepository.UpdateCategoryAsync(id, updateCategory);
 
             if (category == null)

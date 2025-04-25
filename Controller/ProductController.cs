@@ -40,7 +40,7 @@ namespace CoffeeShopApi.Controller
 
             if (product == null)
             {
-                return NotFound();
+                return NotFound(ApiResponse<string>.ErrorResponse("Product not found", 404));
             }
 
             return Ok(ApiResponse<ProductDto>.SuccessResponse(product.ToProductDto(), "Create product successfully"));
@@ -49,6 +49,16 @@ namespace CoffeeShopApi.Controller
         [HttpPost]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductRequestDto requestProduct)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .FirstOrDefault()?.ErrorMessage;
+
+                return BadRequest(ApiResponse<string>.ErrorResponse(firstError ?? "Validation failed", 400));
+            }
+
             if (!await _categoryRepository.CategoryExists(requestProduct.CategoryId))
             {
                 return NotFound(ApiResponse<string>.ErrorResponse("Category not found", 404));
@@ -65,6 +75,16 @@ namespace CoffeeShopApi.Controller
         [Route("{id:int}")]
         public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] UpdateProductRequestDto requestProduct)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .FirstOrDefault()?.ErrorMessage;
+
+                return BadRequest(ApiResponse<string>.ErrorResponse(firstError ?? "Validation failed", 400));
+            }
+
             var product = await _productRepository.UpdateProductAsync(requestProduct, id);
 
             if (product == null)
