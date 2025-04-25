@@ -1,6 +1,7 @@
 
 using CoffeeShopApi.Common;
 using CoffeeShopApi.Dto.Account;
+using CoffeeShopApi.Interface;
 using CoffeeShopApi.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,11 @@ namespace CoffeeShopApi.Controller
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> _userManager;
-        public AccountController(UserManager<AppUser> userManager)
+        private readonly ITokenService _tokenService;
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
         {
             _userManager = userManager;
+            _tokenService = tokenService;
         }
 
         [HttpPost]
@@ -44,7 +47,14 @@ namespace CoffeeShopApi.Controller
                     var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                     if (roleResult.Succeeded)
                     {
-                        return Ok(ApiResponse<AppUser>.SuccessResponse(appUser, "Register successfully"));
+                        var newUserDto = new NewUserDto()
+                        {
+                            Username = appUser.UserName,
+                            Email = appUser.Email,
+                            Token = _tokenService.CreateToken(appUser)
+                        };
+
+                        return Ok(ApiResponse<NewUserDto>.SuccessResponse(newUserDto, "Register successfully"));
                     }
                     else
                     {

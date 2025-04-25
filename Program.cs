@@ -2,6 +2,7 @@ using CoffeeShopApi.Data;
 using CoffeeShopApi.Interface;
 using CoffeeShopApi.Model;
 using CoffeeShopApi.Repository;
+using CoffeeShopApi.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +61,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 builder.Services.AddScoped<ICaterogyRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
