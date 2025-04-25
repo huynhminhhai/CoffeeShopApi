@@ -1,0 +1,34 @@
+# .NET Core / ASP.NET Core
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.pdb
+*.db
+*.log
+*.bak
+*.tmp
+*.temp
+*.nupkg
+*.snk
+*.vs
+.vs/
+.vscode/
+*.csproj.user
+
+# Ignore build output
+/bin/
+/obj/
+
+# Ignore Visual Studio temporary files
+*.sln.docstates
+*.tss
+
+# Ignore NuGet packages
+packages/
+*.nupkg
+
+# Ignore appsettings secrets (if any)
+appsettings.*.json
+!appsettings.json
