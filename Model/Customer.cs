@@ -13,5 +13,6 @@ namespace CoffeeShopApi.Model
         public string Name { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public int Point { get; set; }
+        public List<Order> Orders { get; set; } = new List<Order>();
     }        
 }

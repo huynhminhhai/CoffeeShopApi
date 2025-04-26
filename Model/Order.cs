@@ -11,9 +11,10 @@ namespace CoffeeShopApi.Model
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        
+        public int? CustomerId { get; set; }
+        public Customer? Customer { get; set; }
+        public List<OrderItem> OrderItems { get; set;} = new List<OrderItem>();
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
-        public List<OrderItem> OrderItems { get; set;} = new List<OrderItem>();
     }
 }
