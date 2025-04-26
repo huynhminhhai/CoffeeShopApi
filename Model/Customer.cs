@@ -10,8 +10,8 @@ namespace CoffeeShopApi.Model
     public class Customer
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Phone { get; set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
         public int Point { get; set; }
         public List<Order> Orders { get; set; } = new List<Order>();
     }        

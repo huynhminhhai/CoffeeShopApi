@@ -93,7 +93,7 @@ namespace CoffeeShopApi.Controller
                 return NotFound(ApiResponse<string>.ErrorResponse("Product not found", 404));
             }
 
-            return Ok(product.ToProductDto());
+            return Ok(ApiResponse<ProductDto>.SuccessResponse(product.ToProductDto(), "Update product successfully"));
         }
 
         [HttpDelete]
