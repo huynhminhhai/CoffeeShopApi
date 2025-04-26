@@ -23,11 +23,6 @@ namespace CoffeeShopApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure the Order.Status property
-            modelBuilder.Entity<Order>()
-                .Property(o => o.Status)
-                .HasConversion<string>();
-
             List<IdentityRole> roles = new List<IdentityRole>
             {
                 new IdentityRole

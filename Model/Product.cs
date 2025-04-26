@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CoffeeShopApi.Model
 {
+    [Table("Products")]
     public class Product
     {
         public int Id { get; set; }
