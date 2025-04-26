@@ -5,6 +5,7 @@ using CoffeeShopApi.Interface;
 using CoffeeShopApi.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeShopApi.Controller
 {
@@ -14,13 +15,15 @@ namespace CoffeeShopApi.Controller
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService)
+        private readonly SignInManager<AppUser> _signInManager;
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _signInManager = signInManager;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterRequestDto registerRequestDto)
         {
             try
@@ -74,6 +77,43 @@ namespace CoffeeShopApi.Controller
             {
                 return StatusCode(500, ApiResponse<string>.ErrorResponse("An error occurred: " + e.Message, 500));
             }
+        }
+
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .FirstOrDefault()?.ErrorMessage;
+
+                return BadRequest(ApiResponse<string>.ErrorResponse(firstError ?? "Validation failed", 400));
+            }
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.Username);
+
+            if (user == null)
+            {
+                return Unauthorized(ApiResponse<string>.ErrorResponse("User not found", 401));
+            }
+
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+
+            if (!result.Succeeded)
+            {
+                return Unauthorized(ApiResponse<string>.ErrorResponse("Usernam not found and/or password incorrect", 401));
+            }
+
+            var res = new NewUserDto()
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Token = _tokenService.CreateToken(user)
+            };
+
+            return Ok(ApiResponse<NewUserDto>.SuccessResponse(res, "Login successfully"));
         }
     }
 }
