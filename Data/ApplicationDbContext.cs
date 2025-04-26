@@ -23,6 +23,18 @@ namespace CoffeeShopApi.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<OrderItem>(x => x.HasKey(o => new { o.OrderId, o.ProductId }));
+
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(o => o.Order)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(o => o.OrderId);
+            
+            modelBuilder.Entity<OrderItem>()
+                .HasOne(o => o.Product)
+                .WithMany(o => o.OrderItems)
+                .HasForeignKey(o => o.ProductId);
+
             List<IdentityRole> roles = new List<IdentityRole>
             {
                 new IdentityRole
