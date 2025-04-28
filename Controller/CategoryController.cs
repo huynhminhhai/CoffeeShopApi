@@ -20,7 +20,6 @@ namespace CoffeeShopApi.Controller
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAllCategories([FromQuery] CategoryQueryObject query)
         {
             var categories = await _categoryRepository.GetAllCategoriesAsync(query);

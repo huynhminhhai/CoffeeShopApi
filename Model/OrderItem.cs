@@ -11,8 +11,8 @@ namespace CoffeeShopApi.Model
     {
         public int OrderId { get; set; }
         public int ProductId { get; set; }
-        public Order Order { get; set; } = new Order();
-        public Product Product { get; set; } = new Product();
+        public Order Order { get; set; }
+        public Product Product { get; set; } 
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }

@@ -1,4 +1,5 @@
-using CoffeeShopApi.Model;
+using CoffeeShopApi.Dto.Customer;
+using CoffeeShopApi.Dto.OrderItem;
 
 namespace CoffeeShopApi.Dto.Order
 {
@@ -6,8 +7,8 @@ namespace CoffeeShopApi.Dto.Order
     {
         public int Id { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public int? CustomerId { get; set; }
-        public List<OrderItem>? OrderItems { get; set; }
+        public CustomerDtoWithoutOrders? Customer { get; set; }
+        public List<OrderItemDto> OrderItems { get; set; } = new();
         public decimal TotalAmount { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using CoffeeShopApi.Dto.Order;
+using CoffeeShopApi.Dto.OrderItem;
 using CoffeeShopApi.Model;
 
 namespace CoffeeShopApi.Mapper
@@ -11,6 +12,13 @@ namespace CoffeeShopApi.Mapper
             {
                 Id = order.Id,
                 CreatedAt = order.CreatedAt,
+                Customer = order.Customer != null ? order.Customer.ToCustomerDtoWithoutOrders() : null,
+                OrderItems = order.OrderItems?.Select(oi => new OrderItemDto
+                {
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity,
+                    UnitPrice = oi.UnitPrice
+                }).ToList() ?? new List<OrderItemDto>(),
                 TotalAmount = order.TotalAmount
             };
         }
@@ -19,7 +27,12 @@ namespace CoffeeShopApi.Mapper
         {
             return new Order
             {
-                TotalAmount = requestDto.TotalAmount
+                CustomerId = requestDto.CustomerId,
+                OrderItems = requestDto.OrderItems.Select(oi => new OrderItem
+                {
+                    ProductId = oi.ProductId,
+                    Quantity = oi.Quantity
+                }).ToList()
             };
         }
     }
