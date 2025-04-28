@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CoffeeShopApi.Data;
 using CoffeeShopApi.Dto.Order;
 using CoffeeShopApi.Helper;
@@ -50,9 +52,24 @@ namespace CoffeeShopApi.Repository
             return order;
         }
 
-        public Task<Order> DeleteOrderAsync(int id)
+        public async Task<Order?> DeleteOrderAsync(int id)
         {
-            throw new NotImplementedException();
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                return null;
+            }
+
+            foreach (var orderItem in order.OrderItems)
+            {
+                _context.OrderItems.Remove(orderItem);
+            }
+
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            return order;
         }
 
         public async Task<(List<Order>, int)> GetAllOrdersAsync(OrderQueryObject queryObject)
@@ -88,14 +105,78 @@ namespace CoffeeShopApi.Repository
             return (result, totalItems);
         }
 
-        public Task<Order> GetOrderByIdAsync(int id)
+        public async Task<Order?> GetOrderByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .Include(o => o.Customer)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+            {
+                return null;
+            }
+
+            return order;
         }
 
-        public Task<Order> UpdateOrderAsync(UpdateOrderRequestDto updateOrderDto)
+        public async Task<Order?> UpdateOrderAsync(UpdateOrderRequestDto updateOrderDto, int orderId)
         {
-            throw new NotImplementedException();
+            var order = await _context.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                return null;
+            }
+
+            // Update CustomerId
+            order.CustomerId = updateOrderDto.CustomerId;
+
+            // Get List Products
+            var productIds = updateOrderDto.OrderItems.Select(oi => oi.ProductId).ToList();
+            var products = await _context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
+
+            // Update OrderItems
+            var updatedProductIds = updateOrderDto.OrderItems.Select(oi => oi.ProductId).ToList();
+
+            // Delete OrderItem Not In Request Dto Anymore
+            order.OrderItems.RemoveAll(oi => !updatedProductIds.Contains(oi.ProductId));
+
+            // Update Or Add OrderItem
+            foreach (var updateItem in updateOrderDto.OrderItems)
+            {
+                var existingItem = order.OrderItems.FirstOrDefault(oi => oi.ProductId == updateItem.ProductId);
+
+                var product = products.FirstOrDefault(p => p.Id == updateItem.ProductId);
+
+                if (product == null)
+                {
+                    throw new ArgumentException($"Product with ID {updateItem.ProductId} not found.");
+                }
+
+                if (existingItem != null)
+                {
+                    existingItem.Quantity = updateItem.Quantity;
+                    existingItem.UnitPrice = product.Price;
+                }
+                else
+                {
+                    order.OrderItems.Add(new OrderItem
+                    {
+                        ProductId = updateItem.ProductId,
+                        Quantity = updateItem.Quantity,
+                        UnitPrice = product.Price
+                    });
+                }
+            }
+
+            // Update TotalAmount
+            order.TotalAmount = order.OrderItems.Sum(oi => oi.Quantity * oi.UnitPrice);
+
+            _context.Update(order);
+            await _context.SaveChangesAsync();
+
+            return order;
         }
     }
 }

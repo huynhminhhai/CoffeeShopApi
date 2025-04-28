@@ -10,7 +10,7 @@ namespace CoffeeShopApi.Controller
 {
     [Route("api/order")]
     [ApiController]
-    public class OrderController: ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly IOrderRepository _orderRepository;
         public OrderController(IOrderRepository orderRepository)
@@ -36,6 +36,27 @@ namespace CoffeeShopApi.Controller
             ));
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetOrderById([FromRoute] int id)
+        {
+            try
+            {
+                var order = await _orderRepository.GetOrderByIdAsync(id);
+
+                if (order == null)
+                {
+                    return NotFound(ApiResponse<string>.ErrorResponse("Order not found", 404));
+                }
+
+                return Ok(ApiResponse<OrderDto>.SuccessResponse(order.ToOrderDto(), "Get order successfully"));
+
+            } catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message, 400));
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequestDto requestDto)
         {
@@ -55,7 +76,57 @@ namespace CoffeeShopApi.Controller
                 var createdOrder = await _orderRepository.CreateOrderAsync(order);
 
                 return Ok(ApiResponse<OrderDto>.SuccessResponse(createdOrder.ToOrderDto(), "Create order successfully"));
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message, 400));
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateOrder([FromBody] UpdateOrderRequestDto updateDto,[FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .FirstOrDefault()?.ErrorMessage;
+
+                return BadRequest(ApiResponse<string>.ErrorResponse(firstError ?? "Validation failed", 400));
+            }
+
+            try
+            {
+                var updatedOrder = await _orderRepository.UpdateOrderAsync(updateDto, id);
+
+                if (updatedOrder == null)
+                {
+                    return NotFound(ApiResponse<string>.ErrorResponse("Order not found", 404));
+                }
+
+                return Ok(ApiResponse<OrderDto>.SuccessResponse(updatedOrder.ToOrderDto(), "Update order successfully"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message, 400));
+            }
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteOrder([FromRoute] int id)
+        {
+            try
+            {
+                var deletedOrder = await _orderRepository.DeleteOrderAsync(id);
+
+                if (deletedOrder == null)
+                {
+                    return NotFound(ApiResponse<string>.ErrorResponse("Order not found", 404));
+                }
+
+                return Ok(ApiResponse<OrderDto>.SuccessResponse(deletedOrder.ToOrderDto(), "Delete order successfully"));
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message, 400));
             }
