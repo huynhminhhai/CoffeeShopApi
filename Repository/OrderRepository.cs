@@ -78,7 +78,8 @@ namespace CoffeeShopApi.Repository
 
             if (!string.IsNullOrWhiteSpace(queryObject.PhoneNumber))
             {
-                orders = orders.Where(o => o.Customer.PhoneNumber.ToLower().Contains(queryObject.PhoneNumber.ToLower()));
+                orders = orders.Where(o => o.Customer != null &&
+                                          o.Customer.PhoneNumber.ToLower().Contains(queryObject.PhoneNumber.ToLower()));
             }
 
             if (queryObject.StartDate.HasValue)
