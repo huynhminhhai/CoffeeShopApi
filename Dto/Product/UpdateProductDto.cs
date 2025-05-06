@@ -17,6 +17,6 @@ namespace CoffeeShopApi.Dto.Product
         [Required(ErrorMessage = "Price is required")]
         [Range(0.01, 1000000, ErrorMessage = "Price must be between 0.01 and 1,000,000")]
         public decimal Price { get; set; }
-        public List<CreateProductImageDto> ProductImages { get; set; } = new List<CreateProductImageDto>();
+        public List<int> ProductImages { get; set; } = new List<int>();
     }
 }

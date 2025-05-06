@@ -7,13 +7,14 @@ using CoffeeShopApi.Dto.Product;
 using CoffeeShopApi.Helper;
 using CoffeeShopApi.Interface;
 using CoffeeShopApi.Mapper;
+using CoffeeShopApi.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoffeeShopApi.Controller
 {
     [Route("api/product")]
     [ApiController]
-    public class ProductController: ControllerBase
+    public class ProductController : ControllerBase
     {
         private readonly IProductRepository _productRepository;
         private readonly ICaterogyRepository _categoryRepository;
@@ -69,7 +70,7 @@ namespace CoffeeShopApi.Controller
 
             var createdProduct = await _productRepository.CreateProductAsync(product);
 
-            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, ApiResponse<ProductListDto>.SuccessResponse(product.ToProductListDto(), "Create product successfully"));
+            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, ApiResponse<ProductDto>.SuccessResponse(createdProduct.ToProductDto(), "Create product successfully"));
         }
 
         [HttpPut]

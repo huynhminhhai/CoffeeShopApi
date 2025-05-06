@@ -23,7 +23,8 @@ namespace CoffeeShopApi.Repository
         public async Task<List<Product>> GetProductsAsync(ProductQueryObject queryObject)
         {
 
-            var products = _context.Products.AsQueryable();
+            var products = _context.Products.Include(p => p.ProductImages)
+            .ThenInclude(pi => pi.Image).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(queryObject.Name))
             {
@@ -52,7 +53,10 @@ namespace CoffeeShopApi.Repository
 
         public async Task<Product?> GetProductByIdAsync(int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products
+                .Include(p => p.ProductImages)
+                    .ThenInclude(pi => pi.Image)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
             {
@@ -67,7 +71,12 @@ namespace CoffeeShopApi.Repository
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return product;
+            var productWithImage = await _context.Products
+                .Include(p => p.ProductImages)
+                    .ThenInclude(pi => pi.Image)
+                .FirstOrDefaultAsync(p => p.Id == product.Id);
+
+            return productWithImage;
         }
 
         public async Task<Product?> UpdateProductAsync(UpdateProductRequestDto requestProduct, int id)

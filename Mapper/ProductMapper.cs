@@ -18,25 +18,11 @@ namespace CoffeeShopApi.Mapper
                 Name = product.Name,
                 Price = product.Price,
                 CategoryId = product.CategoryId,
-                ProductImages = product.ProductImages.Select(p => new ProductImageDto
+                ProductImages = product.ProductImages.Select(pi => new ProductImageDto
                 {
-                    ImageId = p.ImageId,
-                }).ToList() ?? new List<ProductImageDto>()
-            };
-        }
-        
-        public static ProductListDto ToProductListDto(this Product product)
-        {
-            return new ProductListDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
-                CategoryId = product.CategoryId,
-                ProductImages = product.ProductImages.Select(p => new ProductImageWithoutProductIdDto
-                {
-                    ImageId = p.ImageId,
-                }).ToList() ?? new List<ProductImageWithoutProductIdDto>()
+                    ImageId = pi.Image.Id,
+                    Url = pi.Image.Url
+                }).ToList()
             };
         }
 
@@ -47,9 +33,9 @@ namespace CoffeeShopApi.Mapper
                 Name = requestDto.Name,
                 Price = requestDto.Price,
                 CategoryId = requestDto.CategoryId,
-                ProductImages = requestDto.ProductImages.Select(p => new ProductImage
+                ProductImages = requestDto.ProductImages.Select(id => new ProductImage
                 {
-                    ImageId = p.ImageId,
+                    ImageId = id,
                 }).ToList()
             };
         }
