@@ -18,11 +18,14 @@ namespace CoffeeShopApi.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Image> Images { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
+            // ORDERITEM 
             modelBuilder.Entity<OrderItem>(x => x.HasKey(o => new { o.OrderId, o.ProductId }));
 
             modelBuilder.Entity<OrderItem>()
@@ -35,6 +38,20 @@ namespace CoffeeShopApi.Data
                 .WithMany(o => o.OrderItems)
                 .HasForeignKey(o => o.ProductId);
 
+            // PRODUCTIMAGE
+            modelBuilder.Entity<ProductImage>(x => x.HasKey(p => new { p.ImageId, p.ProductId }));
+
+            modelBuilder.Entity<ProductImage>()
+                .HasOne(p => p.Product)
+                .WithMany(p => p.ProductImages)
+                .HasForeignKey(p => p.ProductId);
+
+            modelBuilder.Entity<ProductImage>()
+                .HasOne(p => p.Image)
+                .WithMany(p => p.ProductImages)
+                .HasForeignKey(p => p.ImageId);
+
+            // ROLE
             List<IdentityRole> roles = new List<IdentityRole>
             {
                 new IdentityRole

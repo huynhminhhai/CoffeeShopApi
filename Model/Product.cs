@@ -16,5 +16,6 @@ namespace CoffeeShopApi.Model
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
         public List<OrderItem> OrderItems { get; set;} = new List<OrderItem>();
+        public List<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
     }
 }
