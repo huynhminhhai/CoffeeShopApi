@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using CoffeeShopApi.Dto.ProductImage;
 
 namespace CoffeeShopApi.Dto.Product
 {
@@ -16,5 +17,6 @@ namespace CoffeeShopApi.Dto.Product
         [Required(ErrorMessage = "Price is required")]
         [Range(0.01, 1000000, ErrorMessage = "Price must be between 0.01 and 1,000,000")]
         public decimal Price { get; set; }
+        public List<CreateProductImageDto> ProductImages { get; set; } = new List<CreateProductImageDto>();
     }
 }

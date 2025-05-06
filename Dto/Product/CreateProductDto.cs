@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using CoffeeShopApi.Dto.ProductImage;
 
 namespace CoffeeShopApi.Dto.Product
 {
@@ -20,5 +21,6 @@ namespace CoffeeShopApi.Dto.Product
         [Required(ErrorMessage = "CategoryId is required")]
         [Range(1, int.MaxValue, ErrorMessage = "CategoryId must be a positive integer")]
         public int CategoryId { get; set; }
+        public List<CreateProductImageDto> ProductImages { get; set; } = new List<CreateProductImageDto>();
     }
 }

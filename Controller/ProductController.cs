@@ -69,7 +69,7 @@ namespace CoffeeShopApi.Controller
 
             var createdProduct = await _productRepository.CreateProductAsync(product);
 
-            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, ApiResponse<ProductDto>.SuccessResponse(product.ToProductDto(), "Create product successfully"));
+            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, ApiResponse<ProductListDto>.SuccessResponse(product.ToProductListDto(), "Create product successfully"));
         }
 
         [HttpPut]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoffeeShopApi.Dto.Product;
+using CoffeeShopApi.Dto.ProductImage;
 using CoffeeShopApi.Model;
 
 namespace CoffeeShopApi.Mapper
@@ -16,7 +17,26 @@ namespace CoffeeShopApi.Mapper
                 Id = product.Id,
                 Name = product.Name,
                 Price = product.Price,
-                CategoryId = product.CategoryId
+                CategoryId = product.CategoryId,
+                ProductImages = product.ProductImages.Select(p => new ProductImageDto
+                {
+                    ImageId = p.ImageId,
+                }).ToList() ?? new List<ProductImageDto>()
+            };
+        }
+        
+        public static ProductListDto ToProductListDto(this Product product)
+        {
+            return new ProductListDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                CategoryId = product.CategoryId,
+                ProductImages = product.ProductImages.Select(p => new ProductImageWithoutProductIdDto
+                {
+                    ImageId = p.ImageId,
+                }).ToList() ?? new List<ProductImageWithoutProductIdDto>()
             };
         }
 
@@ -26,7 +46,11 @@ namespace CoffeeShopApi.Mapper
             {
                 Name = requestDto.Name,
                 Price = requestDto.Price,
-                CategoryId = requestDto.CategoryId
+                CategoryId = requestDto.CategoryId,
+                ProductImages = requestDto.ProductImages.Select(p => new ProductImage
+                {
+                    ImageId = p.ImageId,
+                }).ToList()
             };
         }
     }
