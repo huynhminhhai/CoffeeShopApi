@@ -81,19 +81,57 @@ namespace CoffeeShopApi.Repository
 
         public async Task<Product?> UpdateProductAsync(UpdateProductRequestDto requestProduct, int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            var product = await _context.Products
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
-            {
                 return null;
-            }
 
+            // Cập nhật thông tin cơ bản
             product.Name = requestProduct.Name;
             product.Price = requestProduct.Price;
 
-            _context.Update(product);
-            await _context.SaveChangesAsync();
+            // Lấy danh sách ID ảnh cũ và mới
+            var currentImageIds = product.ProductImages.Select(pi => pi.ImageId).ToList();
+            var newImageIds = requestProduct.ProductImages;
 
+            // Tìm ảnh cần xóa
+            var imageIdsToRemove = currentImageIds.Except(newImageIds).ToList();
+            foreach (var imageId in imageIdsToRemove)
+            {
+                var productImage = product.ProductImages.FirstOrDefault(pi => pi.ImageId == imageId);
+                if (productImage != null)
+                {
+                    _context.ProductImages.Remove(productImage);
+
+                    // Xóa Image nếu không còn product nào dùng
+                    bool isImageUsedElsewhere = await _context.ProductImages
+                        .AnyAsync(pi => pi.ImageId == imageId && pi.ProductId != product.Id);
+
+                    if (!isImageUsedElsewhere)
+                    {
+                        var image = await _context.Images.FindAsync(imageId);
+                        if (image != null)
+                        {
+                            _context.Images.Remove(image);
+                        }
+                    }
+                }
+            }
+
+            // Tìm ảnh cần thêm
+            var imageIdsToAdd = newImageIds.Except(currentImageIds).ToList();
+            foreach (var imageId in imageIdsToAdd)
+            {
+                _context.ProductImages.Add(new ProductImage
+                {
+                    ProductId = product.Id,
+                    ImageId = imageId
+                });
+            }
+
+            await _context.SaveChangesAsync();
             return product;
         }
 
@@ -104,6 +142,23 @@ namespace CoffeeShopApi.Repository
             if (product == null)
             {
                 return null;
+            }
+
+            foreach (var productImage in product.ProductImages)
+            {
+                var image = productImage.Image;
+
+                // Xoá ProductImage
+                _context.ProductImages.Remove(productImage);
+
+                // Kiểm tra nếu image không còn được liên kết với sản phẩm nào khác thì xoá luôn
+                bool isImageUsedElsewhere = await _context.ProductImages
+                    .AnyAsync(pi => pi.ImageId == image.Id && pi.ProductId != product.Id);
+
+                if (!isImageUsedElsewhere)
+                {
+                    _context.Images.Remove(image);
+                }
             }
 
             _context.Remove(product);
