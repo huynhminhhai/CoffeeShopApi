@@ -121,9 +121,9 @@ namespace CoffeeShopApi.Repository
             return order;
         }
 
-        public async Task<Order?> UpdateOrderAsync(UpdateOrderRequestDto updateOrderDto, int orderId)
+        public async Task<Order?> UpdateOrderAsync(UpdateOrderRequestDto updateOrderDto)
         {
-            var order = await _context.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.Id == orderId);
+            var order = await _context.Orders.Include(o => o.OrderItems).FirstOrDefaultAsync(o => o.Id == updateOrderDto.Id);
 
             if (order == null)
             {

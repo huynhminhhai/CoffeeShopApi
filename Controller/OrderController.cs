@@ -83,8 +83,8 @@ namespace CoffeeShopApi.Controller
             }
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateOrder([FromBody] UpdateOrderRequestDto updateDto,[FromRoute] int id)
+        [HttpPut]
+        public async Task<IActionResult> UpdateOrder([FromBody] UpdateOrderRequestDto updateDto)
         {
             if (!ModelState.IsValid)
             {
@@ -97,7 +97,7 @@ namespace CoffeeShopApi.Controller
 
             try
             {
-                var updatedOrder = await _orderRepository.UpdateOrderAsync(updateDto, id);
+                var updatedOrder = await _orderRepository.UpdateOrderAsync(updateDto);
 
                 if (updatedOrder == null)
                 {
