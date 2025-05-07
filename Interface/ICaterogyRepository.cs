@@ -13,7 +13,7 @@ namespace CoffeeShopApi.Interface
         Task<List<Category>> GetAllCategoriesAsync(CategoryQueryObject query);
         Task<Category?> GetCategoryByIdAsync(int id);
         Task<Category> CreateCategoryAsync(Category category);
-        Task<Category?> UpdateCategoryAsync(int id, UpdateCategoryRequestDto updateCategory);
+        Task<Category?> UpdateCategoryAsync(UpdateCategoryRequestDto updateCategory);
         Task<Category?> DeleteCategoryAsync(int id);
         Task<bool> CategoryExists(int id);
     }

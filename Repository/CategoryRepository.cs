@@ -60,9 +60,9 @@ namespace CoffeeShopApi.Repository
             return category;
         }
 
-        public async Task<Category?> UpdateCategoryAsync(int id, UpdateCategoryRequestDto updateCategory)
+        public async Task<Category?> UpdateCategoryAsync(UpdateCategoryRequestDto updateCategory)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == updateCategory.Id);
 
             if (category == null)
             {
