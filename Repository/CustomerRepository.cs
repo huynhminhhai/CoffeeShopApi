@@ -40,7 +40,11 @@ namespace CoffeeShopApi.Repository
 
         public async Task<Customer?> GetCustomerByIdAsync(int id)
         {
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _context.Customers
+                .Include(c => c.Orders)
+                .ThenInclude(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (customer == null)
             {
@@ -52,7 +56,11 @@ namespace CoffeeShopApi.Repository
 
         public async Task<(List<Customer>, int)> GetCustomersAsync(CustomerQueryObject queryObject)
         {
-            var customers = _context.Customers.AsQueryable();
+            var customers = _context.Customers
+                .Include(c => c.Orders)
+                .ThenInclude(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(queryObject.FullName))
             {
@@ -81,9 +89,9 @@ namespace CoffeeShopApi.Repository
             return await _context.Customers.AnyAsync(c => c.PhoneNumber == phoneNumber);
         }
 
-        public async Task<Customer?> UpdateCustomerAsync(UpdateCustomerRequestDto updateCustomerDto, int id)
+        public async Task<Customer?> UpdateCustomerAsync(UpdateCustomerRequestDto updateCustomerDto)
         {
-            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            var customer = await _context.Customers.FirstOrDefaultAsync(c => c.Id == updateCustomerDto.Id);
 
             if (customer == null)
             {

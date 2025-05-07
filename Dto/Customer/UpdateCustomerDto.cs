@@ -4,6 +4,8 @@ namespace CoffeeShopApi.Dto.Customer
 {
     public class UpdateCustomerRequestDto
     {
+        [Required(ErrorMessage = "Id is required")]
+        public int Id { get; set; }
         [Required(ErrorMessage = "FullName is required")]
         [MaxLength(50, ErrorMessage = "FullName must be at most 50 characters")]
         public string FullName { get; set; } = string.Empty;

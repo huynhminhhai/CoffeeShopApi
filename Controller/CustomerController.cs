@@ -72,8 +72,7 @@ namespace CoffeeShopApi.Controller
         }
 
         [HttpPut]
-        [Route("{id:int}")]
-        public async Task<IActionResult> UpdateCustomer([FromRoute] int id, [FromBody] UpdateCustomerRequestDto updateCustomerRequestDto)
+        public async Task<IActionResult> UpdateCustomer([FromBody] UpdateCustomerRequestDto updateCustomerRequestDto)
         {
             if (!ModelState.IsValid)
             {
@@ -84,7 +83,7 @@ namespace CoffeeShopApi.Controller
                 return BadRequest(ApiResponse<string>.ErrorResponse(firstError ?? "Validation failed", 400));
             }
 
-            var customer = await _customerRepository.UpdateCustomerAsync(updateCustomerRequestDto, id);
+            var customer = await _customerRepository.UpdateCustomerAsync(updateCustomerRequestDto);
 
             if (customer == null)
             {
