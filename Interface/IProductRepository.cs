@@ -13,7 +13,7 @@ namespace CoffeeShopApi.Interface
         Task<List<Product>> GetProductsAsync(ProductQueryObject queryObject);
         Task<Product?> GetProductByIdAsync(int id);
         Task<Product> CreateProductAsync(Product product);
-        Task<Product?> UpdateProductAsync(UpdateProductRequestDto requestProduct, int id);
+        Task<Product?> UpdateProductAsync(UpdateProductRequestDto requestProduct);
         Task<Product?> DeleteProductAsync(int id);
     }
 }

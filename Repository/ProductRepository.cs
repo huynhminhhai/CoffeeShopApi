@@ -79,11 +79,11 @@ namespace CoffeeShopApi.Repository
             return productWithImage;
         }
 
-        public async Task<Product?> UpdateProductAsync(UpdateProductRequestDto requestProduct, int id)
+        public async Task<Product?> UpdateProductAsync(UpdateProductRequestDto requestProduct)
         {
             var product = await _context.Products
                 .Include(p => p.ProductImages)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.Id == requestProduct.Id);
 
             if (product == null)
                 return null;
@@ -132,7 +132,13 @@ namespace CoffeeShopApi.Repository
             }
 
             await _context.SaveChangesAsync();
-            return product;
+
+            var productWithImage = await _context.Products
+                .Include(p => p.ProductImages)
+                    .ThenInclude(pi => pi.Image)
+                .FirstOrDefaultAsync(p => p.Id == product.Id);
+
+            return productWithImage;
         }
 
         public async Task<Product?> DeleteProductAsync(int id)

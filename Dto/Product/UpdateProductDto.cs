@@ -9,6 +9,8 @@ namespace CoffeeShopApi.Dto.Product
 {
     public class UpdateProductRequestDto
     {
+        [Required(ErrorMessage = "Id is required")]
+        public int Id { get; set; }
         [Required(ErrorMessage = "Name is required")]
         [MinLength(3, ErrorMessage = "Name must be at least 3 characters")]
         [MaxLength(100, ErrorMessage = "Name must be at most 100 characters")]
